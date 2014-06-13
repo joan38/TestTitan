@@ -33,9 +33,11 @@ object Main extends App {
     (path, new String(Files.readAllBytes(Paths.get(path))))
   } map {
     case (path, content) =>
-      val start = Math.abs(Random.nextInt(100))
-      val end = start + Math.abs(Random.nextInt(15))
-      (path, "<NM>.*</NM>".r.findAllIn(content) map (_.)  content.replaceAll("<NM>.*</NM>", s"<NM>${content.substring(start, end).replaceAll("""\"|<|>|=""", "")}</NM>"))
+      (path, """<NM>[\w\s]*?</NM>""".r.replaceAllIn(content, _ => {
+        val start = Math.abs(Random.nextInt(100))
+        val end = start + Math.abs(Random.nextInt(15))
+        s"<NM>${content.substring(start, end).replaceAll( """\"|<|>|=|\?""", "")}bla</NM>"
+      }))
   } map {
     case (path, content) =>
       Files.delete(Paths.get(path))
