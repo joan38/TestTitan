@@ -6,6 +6,15 @@ Purpose
 This project is intended to test querying Titan, Gremlin and Gremlin-Scala.
 I created this project after having performance issues and though it would be easier to troubleshoot.
 
+What it does
+------------
+Basically we are loading Vertices from XML files:
+
+- Lookups (Just to add more data)
+- Ingredients (Just to add more data)
+- VTM
+- And VMP. This one is special because it will query using GraphUtils the DB with the DMDID a previously added VTM. This query is the one slowing down the loading process if the indexing is not working properly.
+
 Usage
 -----
 This is a SBT project so run:  
