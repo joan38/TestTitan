@@ -1,22 +1,8 @@
-import java.io.{PrintWriter, File}
-import java.nio.charset.Charset
-import java.nio.file.{Paths, Files}
-
-import com.thinkaurelius.titan.example.GraphOfTheGodsFactory
-import com.tinkerpop.gremlin.java.GremlinPipeline
-import org.slf4j.LoggerFactory
-
-import scala.util.Random
-import scala.xml.XML
-
-//import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Graph
+import com.thinkaurelius.titan.core.TitanFactory
+import com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfiguration._
 import com.tinkerpop.blueprints.Vertex
 import org.apache.commons.configuration.BaseConfiguration
-import com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfiguration._
-import com.thinkaurelius.titan.core.TitanFactory
-import com.tinkerpop.blueprints.impls.tg.TinkerGraph
-import scala.collection.JavaConversions._
-import com.tinkerpop.gremlin.scala._
+import org.slf4j.LoggerFactory
 
 
 object Main extends App {
@@ -26,7 +12,7 @@ object Main extends App {
 
   new scopt.OptionParser[Config](AppName) {
     head(AppName, Version)
-    opt[String]('x', "xml") valueName "<path>" required() action {
+    opt[String]('x', "xml") valueName "<path>" action {
       (x, c) => c.copy(dmdPath = x)
     } text "path to the DMD files"
     opt[String]('d', "dbPath") valueName "<path>" action {
@@ -95,7 +81,7 @@ object Main extends App {
     graph.commit()
 
     // To let ES finish to init
-    Thread.sleep(1000)
+    Thread.sleep(5000)
 
     graph
   }
