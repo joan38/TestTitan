@@ -29,9 +29,9 @@ Results
 -------
 Here is what I measured on my machine (the times are the execution time given by SBT):
 
-- `sbt clean "run -i titan -q graphQuery"` : ~157s
-- `sbt clean "run -i titan -q javaPipes1"` : ~156s
-- `sbt clean "run -i titan -q javaPipes2"` : too much (not using indexing)
-- `sbt clean "run -i titan -q scalaPipes"` : too much (not using indexing)
-- `sbt clean "run -i es -q graphQuery"` : too much (not using indexing)
-- `sbt clean "run -i lucene -q graphQuery"` : too much (not using indexing)
+- `sbt clean "run -i titan -q graphQuery` : ~157s
+- `sbt clean "run -i titan -q javaPipes1` : ~156s
+- `sbt clean "run -i titan -q javaPipes2` : too much (not using indexing)
+- `sbt clean "run -i titan -q scalaPipes` : too much (not using indexing)
+- `sbt clean "run -i es -q graphQuery` : too much (not using indexing)
+- `sbt clean "run -i lucene -q graphQuery` : too much (not using indexing)

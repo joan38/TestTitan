@@ -80,9 +80,6 @@ object Main extends App {
 
     graph.commit()
 
-    // To let ES finish to init
-    Thread.sleep(5000)
-
     graph
   }
 }

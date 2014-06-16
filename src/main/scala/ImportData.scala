@@ -1,10 +1,11 @@
 import java.io.{IOException, File}
-import com.tinkerpop.blueprints.Graph
+import javax.sql.rowset.spi.TransactionalWriter
+import com.tinkerpop.blueprints.{TransactionalGraph, Graph}
 
 
 object ImportData {
 
-  def apply(pathToXmlDirectory: String, graph: Graph, queryStrategy: String) = {
+  def apply(pathToXmlDirectory: String, graph: TransactionalGraph, queryStrategy: String) = {
     val files = new File(pathToXmlDirectory).listFiles()
 
     // Lookups
@@ -21,6 +22,7 @@ object ImportData {
     files.find(_.getName.matches( """.*vtm.*\.xml""")) map
       (VtmLoader(_, graph)) orElse
       (throw new IOException("Could not find VTM XML file"))
+    graph.commit()
 
     // VMPs
     files.find(_.getName.matches( """.*vmp.*\.xml""")) map
