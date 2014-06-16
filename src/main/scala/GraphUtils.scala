@@ -8,18 +8,19 @@ import com.tinkerpop.gremlin.scala._
 
 
 object GraphUtils {
+  val Log = LoggerFactory.getLogger(getClass)
 
   def searchDmdVertex(graph: Graph, `type`: String, id: String, queryStrategy: String) = {
     val start = System.currentTimeMillis()
 
     val result = queryStrategy match {
       case "graphQuery" => graph.query().has("dmdid", id).has("type", `type`).vertices().toStream
-      case "javaPipes1" => new GremlinPipeline(graph.getVertices("dmdid", id)).has("type", `type`).has("type", `type`).cast(classOf[Vertex]).iterator().toStream
-      case "javaPipes2" => new GremlinPipeline(graph.getVertices).has("dmdid", id).has("type", `type`).has("type", `type`).cast(classOf[Vertex]).iterator().toStream
+      case "javaPipes1" => new GremlinPipeline(graph.getVertices("dmdid", id)).has("type", `type`).cast(classOf[Vertex]).iterator().toStream
+      case "javaPipes2" => new GremlinPipeline(graph.getVertices).has("dmdid", id).has("type", `type`).cast(classOf[Vertex]).iterator().toStream
       case "scalaPipes" => graph.V.has("dmdid", id).has("type", `type`).toStream()
     }
 
-    LoggerFactory.getLogger(getClass).info((System.currentTimeMillis() - start).toString)
+    Log.debug((System.currentTimeMillis() - start).toString)
     result
   }
 
@@ -29,6 +30,6 @@ object GraphUtils {
   def setVertexProperty(xml: Node, vertex: Vertex) =
     vertex.setProperty(toCamelCase(xml.label), xml.text)
 
-  def toCamelCase(s: String): String =
+  def toCamelCase(s: String) =
     "_[a-z]".r.replaceAllIn(s.toLowerCase, _.toString().toUpperCase).replaceAll("_", "")
 }
