@@ -9,7 +9,7 @@ import com.tinkerpop.blueprints.Graph
 object VmpLoader {
   private val Log = LoggerFactory.getLogger(getClass)
 
-  def apply(path: File, graph: Graph) {
+  def apply(path: File, graph: Graph, queryStrategy: String) {
     def loadVmp(vmpXml: Node) {
       val vertex = graph.addV()
       Log trace s"Add vertex VMP ${(vmpXml \ "VPID").text}"
@@ -44,7 +44,7 @@ object VmpLoader {
       (vmpXml \ "UNIT_DOSE_UOMCD").headOption map setDmdProperty
 
       (vmpXml \ "VTMID").headOption map { id =>
-        graph.addE(searchDmdVertex(graph, "VTM", id.text).head, vertex, "has")
+        graph.addE(searchDmdVertex(graph, "VTM", id.text, queryStrategy).head, vertex, "has")
       }
     }
 
@@ -60,19 +60,19 @@ object VmpLoader {
       (vpiXml \ "STRNT_DNMTR_VAL").headOption map setDmdProperty
 
       (vpiXml \ "VPID").headOption map { id =>
-        graph.addE(vertex, searchDmdVertex(graph, "VMP", id.text).head, "has")
+        graph.addE(vertex, searchDmdVertex(graph, "VMP", id.text, queryStrategy).head, "has")
       } orElse (throw new IllegalStateException("VPID required"))
 
       (vpiXml \ "ISID").headOption map { id =>
-        graph.addE(vertex, searchDmdVertex(graph, "ING", id.text).head, "has")
+        graph.addE(vertex, searchDmdVertex(graph, "ING", id.text, queryStrategy).head, "has")
       } orElse (throw new IllegalStateException("ISID required"))
 
       (vpiXml \ "STRNT_NMRTR_UOMCD").headOption map { id =>
-        graph.addE(vertex, searchDmdVertex(graph, "UNIT_OF_MEASURE", id.text).head, "has")
+        graph.addE(vertex, searchDmdVertex(graph, "UNIT_OF_MEASURE", id.text, queryStrategy).head, "has")
       }
 
       (vpiXml \ "STRNT_DNMTR_UOMCD").headOption map { id =>
-        graph.addE(vertex, searchDmdVertex(graph, "UNIT_OF_MEASURE", id.text).head, "has")
+        graph.addE(vertex, searchDmdVertex(graph, "UNIT_OF_MEASURE", id.text, queryStrategy).head, "has")
       }
     }
 
@@ -82,12 +82,12 @@ object VmpLoader {
       vertex.setProperty("type", "ONT")
 
       (ontDrugFormXml \ "VPID").headOption map { id =>
-        graph.addE(vertex, searchDmdVertex(graph, "VMP", id.text).head, "has")
+        graph.addE(vertex, searchDmdVertex(graph, "VMP", id.text, queryStrategy).head, "has")
       } orElse (throw new IllegalStateException("VPID required"))
 
       // TODO Might get ride of this vertex
       (ontDrugFormXml \ "FORMCD").headOption map { id =>
-        graph.addE(vertex, searchDmdVertex(graph, "ONT_FORM_ROUTE", id.text).head, "has")
+        graph.addE(vertex, searchDmdVertex(graph, "ONT_FORM_ROUTE", id.text, queryStrategy).head, "has")
       } orElse (throw new IllegalStateException("FORMCD required"))
     }
 
@@ -97,12 +97,12 @@ object VmpLoader {
       vertex.setProperty("type", "DFORM")
 
       (drugFormXml \ "VPID").headOption map { id =>
-        graph.addE(vertex, searchDmdVertex(graph, "VMP", id.text).head, "has")
+        graph.addE(vertex, searchDmdVertex(graph, "VMP", id.text, queryStrategy).head, "has")
       } orElse (throw new IllegalStateException("VPID required"))
 
       // TODO Might get ride of this vertex
       (drugFormXml \ "FORMCD").headOption map { id =>
-        graph.addE(vertex, searchDmdVertex(graph, "FORM", id.text).head, "has")
+        graph.addE(vertex, searchDmdVertex(graph, "FORM", id.text, queryStrategy).head, "has")
       } orElse (throw new IllegalStateException("FORMCD required"))
     }
 
@@ -114,7 +114,7 @@ object VmpLoader {
       (drugRouteXml \ "ROUTECD").headOption map (setVertexProperty(_, vertex)) orElse (throw new IllegalStateException("ROUTECD required"))
 
       (drugRouteXml \ "VPID").headOption map { id =>
-        graph.addE(vertex, searchDmdVertex(graph, "VMP", id.text).head, "has")
+        graph.addE(vertex, searchDmdVertex(graph, "VMP", id.text, queryStrategy).head, "has")
       } orElse (throw new IllegalStateException("VPID required"))
     }
 
@@ -129,17 +129,17 @@ object VmpLoader {
       (controlDrugInfoXml \ "CAT_PREVCD").headOption map setDmdProperty
 
       (controlDrugInfoXml \ "VPID").headOption map { id =>
-        graph.addE(vertex, searchDmdVertex(graph, "VMP", id.text).head, "has")
+        graph.addE(vertex, searchDmdVertex(graph, "VMP", id.text, queryStrategy).head, "has")
       } orElse (throw new IllegalStateException("VPID required"))
 
       // TODO Might get ride of this vertex
       (controlDrugInfoXml \ "CATCD").headOption map { id =>
-        graph.addE(vertex, searchDmdVertex(graph, "CONTROL_DRUG_CATEGORY", id.text).head, "has")
+        graph.addE(vertex, searchDmdVertex(graph, "CONTROL_DRUG_CATEGORY", id.text, queryStrategy).head, "has")
       } orElse (throw new IllegalStateException("CATCD required"))
 
       // TODO Might get ride of this vertex
       (controlDrugInfoXml \ "CAT_PREVCD").headOption map { id =>
-        graph.addE(vertex, searchDmdVertex(graph, "CONTROL_DRUG_CATEGORY", id.text).head, "previous")
+        graph.addE(vertex, searchDmdVertex(graph, "CONTROL_DRUG_CATEGORY", id.text, queryStrategy).head, "previous")
       }
     }
 

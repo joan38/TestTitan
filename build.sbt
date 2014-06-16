@@ -10,3 +10,5 @@ libraryDependencies ++= Seq(
   "com.thinkaurelius.titan" % "titan-es" % "0.4.4",
   "com.thinkaurelius.titan" % "titan-lucene" % "0.4.4"
 )
+
+addCommandAlias("load", "run -x resources -d target/database -i titan -q javaPipes1")

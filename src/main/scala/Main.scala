@@ -24,45 +24,19 @@ object Main extends App {
   val AppName = "Test Titan"
   val Version = "0.1"
 
-
-  // Code to replace Drug names by random
-  Seq("resources/f_ingredient2_3080514.xml",
-    "resources/f_lookup2_3080514.xml",
-    "resources/f_vmp2_3080514.xml",
-    "resources/f_vtm2_3080514.xml") map { path =>
-    (path, new String(Files.readAllBytes(Paths.get(path))))
-  } map {
-    case (path, content) =>
-      (path, """<NM>[\w\s]*?</NM>""".r.replaceAllIn(content, _ => {
-        val start = Math.abs(Random.nextInt(100))
-        val end = start + Math.abs(Random.nextInt(15))
-        s"<NM>${content.substring(start, end).replaceAll( """\"|<|>|=|\?""", "")}bla</NM>"
-      }))
-  } map {
-    case (path, content) =>
-      Files.delete(Paths.get(path))
-      val out = new PrintWriter(path)
-      out.println(content)
-      out.close()
-  }
-  System.exit(0)
-
   new scopt.OptionParser[Config](AppName) {
     head(AppName, Version)
-    opt[String]('m', "dmd") valueName "<path>" required() action {
+    opt[String]('x', "xml") valueName "<path>" required() action {
       (x, c) => c.copy(dmdPath = x)
     } text "path to the DMD files"
-    opt[String]('d', "db") valueName "<name>" action {
-      (x, c) => c.copy(dataBase = x)
-    } text "name of the DB"
-    opt[String]('s', "dbPath") valueName "<path>" action {
+    opt[String]('d', "dbPath") valueName "<path>" action {
       (x, c) => c.copy(dataBasePath = x)
     } text "path to the DB"
     opt[String]('i', "indexing") valueName "<mode>" action {
       (x, c) => c.copy(indexingMode = x)
     } text "Indexing mode"
-    opt[String]('i', "querying") valueName "<mode>" action {
-      (x, c) => c.copy(queryingMode = x)
+    opt[String]('q', "querying") valueName "<mode>" action {
+      (x, c) => c.copy(queryStrategy = x)
     } text "Query mode"
   } parse(args, Config()) map { config =>
     Log debug "Starting"
@@ -72,7 +46,7 @@ object Main extends App {
 
     try {
       // Import everything in the graph DB
-        ImportDmd(config.dmdPath, graph)
+        ImportData(config.dmdPath, graph, config.queryStrategy)
         graph.commit()
     } finally {
       Log debug "Shutting down the graph DB"
