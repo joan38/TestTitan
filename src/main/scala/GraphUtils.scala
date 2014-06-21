@@ -19,6 +19,7 @@ object GraphUtils {
       case "graphQuery" => graph.query().has("dmdid", id).has("type", `type`).vertices().toStream
       case "javaPipes1" => new GremlinPipeline(graph.getVertices("dmdid", id)).has("type", `type`).cast(classOf[Vertex]).iterator().toStream
       case "javaPipes2" => new GremlinPipeline(graph.getVertices).has("dmdid", id).has("type", `type`).cast(classOf[Vertex]).iterator().toStream
+      case "javaPipes3" => new GremlinPipeline(graph).V().has("dmdid", id).has("type", `type`).cast(classOf[Vertex]).iterator().toStream
       case "scalaPipes" => graph.V.has("dmdid", id).has("type", `type`).toStream()
       case "groovyQuery" =>
         Engine.put("graph", graph)
