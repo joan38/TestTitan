@@ -32,8 +32,9 @@ This is a SBT project so run:
 - graphQuery for `graph.query().has("dmdid", id).has("type", type).vertices().toStream`
 - javaPipes1 for `new GremlinPipeline(graph.getVertices("dmdid", id)).has("type", type).cast(classOf[Vertex]).iterator().toStream`
 - javaPipes2 for `new GremlinPipeline(graph.getVertices).has("dmdid", id).has("type", type).cast(classOf[Vertex]).iterator().toStream`
-- javaPipes3 for `new GremlinPipeline(graph).V().has("dmdid", id).has("type", `type`).cast(classOf[Vertex]).iterator().toStream`
-- scalaPipes for `graph.V.has("dmdid", id).has("type", type).toStream()`
+- javaPipes3 for `new GremlinPipeline(graph).V().has("dmdid", id).has("type", type).cast(classOf[Vertex]).iterator().toStream`
+- scalaPipes1 for `graph.V.has("dmdid", id).has("type", type).toStream()`
+- scalaPipes2 for `GremlinScalaPipeline(graph).V.has("dmdid", id).has("type", type).toStream()`
 - groovyQuery for `graph.V.has("dmdid", id).has("type", type)` (this code is Groovy code executed via the GremlinGroovyScriptEngine)
 
 Results
@@ -44,7 +45,8 @@ Here is what I measured on my machine (the times are the execution time given by
 - `sbt clean "run -i titan -q javaPipes1` : ~156s
 - `sbt clean "run -i titan -q javaPipes2` : too much (not using indexing)
 - `sbt clean "run -i titan -q javaPipes3` : ??? (Using indexing)
-- `sbt clean "run -i titan -q scalaPipes` : too much (not using indexing)
+- `sbt clean "run -i titan -q scalaPipes1` : too much (not using indexing)
+- `sbt clean "run -i titan -q scalaPipes2` : too much (not using indexing)
 - `sbt clean "run -i titan -q groovyQuery` : ~170s
 - `sbt clean "run -i es -q graphQuery` : too much (not using indexing)
 - `sbt clean "run -i lucene -q graphQuery` : too much (not using indexing)
