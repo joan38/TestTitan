@@ -12,7 +12,7 @@ object GraphUtils {
   val Log = LoggerFactory.getLogger(getClass)
   val Engine = new GremlinGroovyScriptEngine()
 
-  def searchDmdVertex(graph: Graph, `type`: String, id: String, queryStrategy: String) = {
+  def searchDmdVertex(graph: Graph, `type`: String, id: String, queryStrategy: String): Stream[Vertex] = {
     val start = System.currentTimeMillis()
 
     val result = queryStrategy match {
@@ -21,7 +21,8 @@ object GraphUtils {
       case "javaPipes2" => new GremlinPipeline(graph.getVertices).has("dmdid", id).has("type", `type`).cast(classOf[Vertex]).iterator().toStream
       case "javaPipes3" => new GremlinPipeline(graph).V().has("dmdid", id).has("type", `type`).cast(classOf[Vertex]).iterator().toStream
       case "scalaPipes1" => graph.V.has("dmdid", id).has("type", `type`).toStream()
-      case "scalaPipes2" => GremlinScalaPipeline(graph).V.has("dmdid", id).has("type", `type`).toStream()
+      case "scalaPipes2" => GremlinScalaPipeline(graph).V.has("dmdid", id).has("type", `type`).toStream
+      case "scalaPipes3" ⇒ GremlinScalaPipeline.fromElements(graph.getVertices("dmdid", id)).has("type", `type`).toStream
       case "groovyQuery" =>
         Engine.put("graph", graph)
         Engine.put("id", id)
